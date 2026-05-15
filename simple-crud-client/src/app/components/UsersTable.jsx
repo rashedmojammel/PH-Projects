@@ -1,8 +1,19 @@
-import { Button, Table } from '@heroui/react';
+'use client'
+import { AlertDialog, Button, Table } from '@heroui/react';
 import Link from 'next/link';
-import React from 'react';
+// import React from 'react';
+// import { deleteUser } from '../lib/actions';
 
-const UsersTable = async({users}) => {
+const UsersTable = ({users, deleteUserAction}) => {
+
+   const handleDelete = async(userId) => {
+    try {
+      await deleteUserAction(userId);
+    } catch (error) {
+      console.error('Failed to delete user:', error);
+      alert('Failed to delete user. Please check if the backend server is running.');
+    }
+   }
     return (
          <Table>
       <Table.ScrollContainer>
@@ -32,7 +43,35 @@ const UsersTable = async({users}) => {
                 </Table.Cell>
                  <Table.Cell>
                     
-                     <Button variant="danger">Delete</Button>
+                     <AlertDialog>
+      <AlertDialog.Trigger>
+        <Button variant="danger">Delete</Button>
+      </AlertDialog.Trigger>
+      <AlertDialog.Backdrop>
+        <AlertDialog.Container>
+          <AlertDialog.Dialog className="sm:max-w-[400px]">
+            <AlertDialog.CloseTrigger />
+            <AlertDialog.Header>
+              <AlertDialog.Icon status="danger" />
+              <AlertDialog.Heading>Delete User</AlertDialog.Heading>
+            </AlertDialog.Header>
+            <AlertDialog.Body>
+              <p>
+                This will permanently delete the user <strong>{user.name}</strong> and all associated data. This action cannot be undone.
+              </p>
+            </AlertDialog.Body>
+            <AlertDialog.Footer>
+              <Button slot="close" variant="tertiary">
+                Cancel
+              </Button>
+              <Button slot="close" onClick={() => handleDelete(user._id)} variant="danger">
+                Delete
+              </Button>
+            </AlertDialog.Footer>
+          </AlertDialog.Dialog>
+        </AlertDialog.Container>
+      </AlertDialog.Backdrop>
+    </AlertDialog>
 
                 </Table.Cell>
                 
